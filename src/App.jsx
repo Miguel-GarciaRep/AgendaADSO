@@ -1,16 +1,48 @@
+import { useState } from "react";
+import "./App.css";
+import ContactoCard from "./components/ContactoCard";
+import FormularioContacto from "./components/FormularioContacto";
+
 export default function App() {
-  const fecha = new Date().toLocaleString();
+  const [contactos, setContactos] = useState([
+    {
+      id: 1,
+      nombre: "Carolina Pérez",
+      telefono: "300 123 4567",
+      correo: "carolina@sena.edu.co",
+      etiqueta: "Compañera",
+    },
+  ]);
+
+  // Agregar
+  const agregarContacto = (nuevo) => {
+    setContactos((prev) => [...prev, { id: Date.now(), ...nuevo }]);
+  };
+
+  // Eliminar
+  const eliminarContacto = (id) => {
+    setContactos((prev) => prev.filter((c) => c.id !== id));
+  };
 
   return (
-    <main>
-      <h1>Hola profe. Soy Miguel Angel Garcia Londoño</h1>
-      <p>Lo que espero que pase en este trimestre con su materia/competencia, es poder llegar a extender
-        mi conocimiento, hacerme un profesional en el tema y graduarme con honores para entrar en una empresa
-        y convertirme en un exitoso</p>
-      <p>
-        Y lo que mas me gustaria hacer, es estudiar programacion de videojuegos y dedicarme a crear juegos
-        indie o en una empresa dedicada a ello.
-      </p>
+    <main className="app-container">
+      <h1 className="app-title">Agenda ADSO v2</h1>
+
+      <FormularioContacto onAgregar={agregarContacto} />
+
+      <section className="lista-contactos">
+        {contactos.map((c) => (
+          <ContactoCard
+            key={c.id}
+            id={c.id}
+            nombre={c.nombre}
+            telefono={c.telefono}
+            correo={c.correo}
+            etiqueta={c.etiqueta}
+            onDelete={eliminarContacto}
+          />
+        ))}
+      </section>
     </main>
-  )
+  );
 }
