@@ -8,6 +8,8 @@ export default function App() {
     JSON.parse(localStorage.getItem("contactos")) || [];
 
   const [contactos, setContactos] = useState(contactosGuardados);
+  const [busqueda, setBusqueda] = useState("");
+  const [ordenAsc, setOrdenAsc] = useState(true);
 
   useEffect(() => {
     localStorage.setItem("contactos", JSON.stringify(contactos));
@@ -21,22 +23,73 @@ export default function App() {
     setContactos((prev) => prev.filter((c) => c.correo !== correo));
   };
 
+  const contactosFiltrados = contactos.filter((c) => {
+    const termino = busqueda.toLowerCase();
+    const nombre = c.nombre.toLowerCase();
+    const correo = c.correo.toLowerCase();
+    const etiqueta = (c.etiqueta || "").toLowerCase();
+    const telefono = c.telefono.toLowerCase();
+    return (
+      nombre.includes(termino) ||
+      correo.includes(termino) ||
+      etiqueta.includes(termino) ||
+      telefono.includes(termino)
+    );
+  });
+
+  const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
+    const nombreA = a.nombre.toLowerCase();
+    const nombreB = b.nombre.toLowerCase();
+    if (nombreA < nombreB) return ordenAsc ? -1 : 1;
+    if (nombreA > nombreB) return ordenAsc ? 1 : -1;
+    return 0;
+  });
+
   return (
     <main className="app-container">
-      <h1 className="app-title">Agenda ADSO v3</h1>
+      <h1 className="app-title">Agenda ADSO v8</h1>
       <p className="subtitulo">
-        Persistencia con localStorage + UI moderna
+        Búsqueda y ordenamiento de contactos
       </p>
 
       <FormularioContacto onAgregar={agregarContacto} />
 
-      {contactos.map((c) => (
-        <ContactoCard
-          key={c.correo}
-          {...c}
-          onEliminar={eliminarContacto}
+      <div className="barra-herramientas">
+        <input
+          className="input-busqueda"
+          type="text"
+          placeholder="Buscar por nombre, correo, etiqueta o teléfono..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
         />
-      ))}
+        <button
+          className="btn-orden"
+          type="button"
+          onClick={() => setOrdenAsc((prev) => !prev)}
+        >
+          {ordenAsc ? "Ordenar Z-A" : "Ordenar A-Z"}
+        </button>
+      </div>
+
+      <p className="contador">
+        Mostrando {contactosOrdenados.length} contacto(s)
+      </p>
+
+      <section className="lista-contactos">
+        {contactosOrdenados.length === 0 ? (
+          <p className="sin-resultados">
+            No se encontraron contactos que coincidan con "{busqueda}"
+          </p>
+        ) : (
+          contactosOrdenados.map((c) => (
+            <ContactoCard
+              key={c.correo}
+              {...c}
+              onEliminar={eliminarContacto}
+            />
+          ))
+        )}
+      </section>
     </main>
   );
 }

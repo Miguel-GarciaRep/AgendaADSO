@@ -111,3 +111,62 @@ input {
 .btn-eliminar:hover {
   filter: brightness(0.85);
 }
+
+.barra-herramientas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+@media (min-width: 640px) {
+  .barra-herramientas {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.input-busqueda {
+  flex: 1;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.input-busqueda:focus {
+  outline: none;
+  border-color: var(--morado);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.btn-orden {
+  background: #f3f4f6;
+  color: var(--gris);
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-orden:hover {
+  background: #e5e7eb;
+}
+
+.contador {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0 0 0.6rem 0;
+}
+
+.sin-resultados {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  padding: 2rem 0;
+}
