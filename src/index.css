@@ -1,49 +1,80 @@
-/* === Estilos globales peara la app Ract === */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Fuente base y fondo general */
 body {
-  font-family: sans-serif;
-  background-color: #f2f2f2; /* gris claro */
-  color: #222; /* texto oscuro legible */
-  margin: 0;
-  padding: 0;
+  @apply bg-gray-50 text-gray-800 font-sans;
 }
 
-/* Enlaces */
-a {
-  color: #008037; /* verde SENA */
-  text-decoration: none;
+@layer utilities {
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+    opacity: 0;
+  }
 }
 
-a:hover {
-  text-decoration: underline;
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Botones genéricos */
-button {
-  background-color: #008037;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-size: 14px;
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
 }
 
-button:hover {
-  background-color: #006b2f; /* verde más oscuro */
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
 }
 
-/* Imágenes responsivas */
-img {
-  max-width: 100%;
-  height: auto;
+*:focus-visible {
+  @apply outline-none ring-2 ring-indigo-500 ring-offset-2;
 }
 
-/* Centramos el contenido principal */
-#root {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+  @apply appearance-none;
+}
+
+::placeholder {
+  @apply text-gray-400;
 }
