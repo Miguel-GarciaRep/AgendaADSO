@@ -16,12 +16,12 @@ function ContactoCard({ id, nombre, telefono, correo, etiqueta, onEliminar, onEd
 
   return (
     <div
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 hover:-translate-y-1 animate-fade-in-up"
+      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-7 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 hover:-translate-y-1 animate-fade-in-up"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       <div className="flex justify-between items-start gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <h3 className="text-xl font-bold text-gray-900 truncate">{nombre}</h3>
+          <h3 className="text-xl font-bold text-gray-900">{nombre}</h3>
           {etiqueta && (
             <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-2 ${getEtiquetaColor(etiqueta)}`}>
               {etiqueta}
@@ -67,7 +67,7 @@ function ContactoCard({ id, nombre, telefono, correo, etiqueta, onEliminar, onEd
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <span className="font-medium truncate">{correo}</span>
+            <span className="font-medium break-all">{correo}</span>
           </div>
         )}
       </div>
