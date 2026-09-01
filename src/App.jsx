@@ -4,7 +4,7 @@ import FormularioContacto from "./components/FormularioContacto";
 import ContactoCard from "./components/ContactoCard";
 
 // --- Datos de identificación del aprendiz (personalizar aquí) ---
-const FICHA = "3223876";
+const FICHA = "3412785";
 const GRUPO = "Desarrollo Web ReactJS - CTMA";
 
 function App() {
