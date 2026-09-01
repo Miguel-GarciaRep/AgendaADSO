@@ -35,3 +35,12 @@ export async function eliminarContactoPorId(id) {
   guardarContactos(filtrados);
   return true;
 }
+
+export async function actualizarContacto(id, data) {
+  const contactos = leerContactos();
+  const index = contactos.findIndex((c) => c.id === id);
+  if (index === -1) throw new Error("Contacto no encontrado");
+  contactos[index] = { ...contactos[index], ...data };
+  guardarContactos(contactos);
+  return contactos[index];
+}
