@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { listarContactos, crearContacto, eliminarContactoPorId } from "./api";
+import { listarContactos, crearContacto, eliminarContactoPorId, actualizarContacto } from "./api";
 import FormularioContacto from "./components/FormularioContacto";
 import ContactoCard from "./components/ContactoCard";
 
@@ -9,6 +9,7 @@ function App() {
   const [error, setError] = useState("");
   const [busqueda, setBusqueda] = useState("");
   const [ordenAsc, setOrdenAsc] = useState(true);
+  const [contactoEnEdicion, setContactoEnEdicion] = useState(null);
 
   useEffect(() => {
     const cargarContactos = async () => {
@@ -48,11 +49,40 @@ function App() {
       setError("");
       await eliminarContactoPorId(id);
       setContactos((prev) => prev.filter((c) => c.id !== id));
+      if (contactoEnEdicion?.id === id) {
+        setContactoEnEdicion(null);
+      }
     } catch (error) {
       console.error("Error al eliminar contacto:", error);
       setError(
         "No se pudo eliminar el contacto. Vuelve a intentarlo o verifica el servidor."
       );
+    }
+  };
+
+  const onEditarClick = (contacto) => {
+    setError("");
+    setContactoEnEdicion(contacto);
+  };
+
+  const onCancelarEdicion = () => {
+    setContactoEnEdicion(null);
+  };
+
+  const onActualizarContacto = async (id, datosActualizados) => {
+    try {
+      setError("");
+      const contactoActualizado = await actualizarContacto(id, datosActualizados);
+      setContactos((prev) =>
+        prev.map((c) => (c.id === id ? contactoActualizado : c))
+      );
+      setContactoEnEdicion(null);
+    } catch (error) {
+      console.error("Error al actualizar contacto:", error);
+      setError(
+        "No se pudo actualizar el contacto. Verifica los datos e intenta nuevamente."
+      );
+      throw error;
     }
   };
 
@@ -116,7 +146,12 @@ function App() {
           </div>
         ) : (
           <>
-            <FormularioContacto onAgregar={onAgregarContacto} />
+            <FormularioContacto
+              onAgregar={onAgregarContacto}
+              contactoEnEdicion={contactoEnEdicion}
+              onGuardarEdicion={onActualizarContacto}
+              onCancelarEdicion={onCancelarEdicion}
+            />
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <input
@@ -165,6 +200,7 @@ function App() {
                       correo={c.correo}
                       etiqueta={c.etiqueta}
                       onEliminar={onEliminarContacto}
+                      onEditar={onEditarClick}
                       index={index}
                     />
                   ))}

@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function FormularioContacto({ onAgregar }) {
-  const [form, setForm] = useState({
-    nombre: "",
-    telefono: "",
-    correo: "",
-    etiqueta: "",
-  });
+const FORM_VACIO = { nombre: "", telefono: "", correo: "", etiqueta: "" };
+
+function FormularioContacto({
+  onAgregar,
+  contactoEnEdicion = null,
+  onGuardarEdicion,
+  onCancelarEdicion,
+}) {
+  const modoEdicion = Boolean(contactoEnEdicion);
+
+  const [form, setForm] = useState(FORM_VACIO);
 
   const [errores, setErrores] = useState({
     nombre: "",
@@ -20,6 +24,22 @@ function FormularioContacto({ onAgregar }) {
 
   const [enviando, setEnviando] = useState(false);
   const [touched, setTouched] = useState({});
+
+  // Cuando cambia el contacto en edición, cargamos (o limpiamos) el formulario
+  useEffect(() => {
+    if (contactoEnEdicion) {
+      setForm({
+        nombre: contactoEnEdicion.nombre || "",
+        telefono: contactoEnEdicion.telefono || "",
+        correo: contactoEnEdicion.correo || "",
+        etiqueta: contactoEnEdicion.etiqueta || "",
+      });
+    } else {
+      setForm(FORM_VACIO);
+    }
+    setErrores({ nombre: "", telefono: "", correo: "" });
+    setTouched({});
+  }, [contactoEnEdicion]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -70,14 +90,27 @@ function FormularioContacto({ onAgregar }) {
 
     try {
       setEnviando(true);
-      await delay(4000);
-      await onAgregar(form);
-      setForm({ nombre: "", telefono: "", correo: "", etiqueta: "" });
+      await delay(modoEdicion ? 1500 : 4000);
+
+      if (modoEdicion) {
+        await onGuardarEdicion(contactoEnEdicion.id, form);
+        // Al confirmarse, App.jsx limpia contactoEnEdicion y el useEffect
+        // de arriba se encarga de vaciar el formulario.
+      } else {
+        await onAgregar(form);
+        setForm(FORM_VACIO);
+      }
+
       setErrores({ nombre: "", telefono: "", correo: "" });
       setTouched({});
     } finally {
       setEnviando(false);
     }
+  };
+
+  const onCancelarClick = () => {
+    if (enviando) return;
+    onCancelarEdicion?.();
   };
 
   const inputClasses = (name) => {
@@ -100,7 +133,9 @@ function FormularioContacto({ onAgregar }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Nuevo contacto</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          {modoEdicion ? "Editar contacto" : "Nuevo contacto"}
+        </h2>
       </div>
 
       <div>
@@ -187,7 +222,7 @@ function FormularioContacto({ onAgregar }) {
         />
       </div>
 
-      <div className="pt-4 border-t border-gray-100">
+      <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
         <button
           type="submit"
           disabled={enviando}
@@ -205,6 +240,13 @@ function FormularioContacto({ onAgregar }) {
               </svg>
               Guardando...
             </>
+          ) : modoEdicion ? (
+            <>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Guardar cambios
+            </>
           ) : (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,6 +256,22 @@ function FormularioContacto({ onAgregar }) {
             </>
           )}
         </button>
+
+        {modoEdicion && (
+          <button
+            type="button"
+            onClick={onCancelarClick}
+            disabled={enviando}
+            className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed
+                       text-gray-700 px-8 py-3.5 rounded-xl font-semibold border border-gray-200
+                       transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Cancelar edición
+          </button>
+        )}
       </div>
     </form>
   );
